@@ -1,0 +1,497 @@
+﻿<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GeoSnap â€” Spatial intelligence for the physical world</title>
+<meta name="description" content="GeoSnap is a spatial intelligence platform that learns physical environments so people and autonomous systems can know where they are, navigate with confidence, and understand their surroundings â€” without relying on GPS alone.">
+<meta name="theme-color" content="#0e141a">
+<meta property="og:type" content="website">
+<meta property="og:title" content="GeoSnap â€” Spatial intelligence for the physical world">
+<meta property="og:description" content="Infrastructure-free spatial intelligence for venues and autonomous systems. Positioning and understanding where GPS falls short.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2C10.5 2 6 6.4 6 11.9 6 19.6 16 30 16 30s10-10.4 10-18.1C26 6.4 21.5 2 16 2z' fill='%23EA6A54'/%3E%3Ccircle cx='16' cy='12' r='5.4' fill='%23fff'/%3E%3Ccircle cx='16' cy='12' r='3' fill='%235A9BDD'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e141a;--bg-2:#141c24;--bg-3:#1a232d;
+  --ink:#eaf0f4;--slate:#95a5b2;
+  --coral:#ea6a54;--coral-h:#f2836e;--blue:#5a9bdd;--teal:#38b89c;--yellow:#e4bc55;
+  --line:rgba(255,255,255,.09);--line-2:rgba(255,255,255,.16);
+  --radius:14px;--wrap:1140px;
+  --fs-h1:clamp(2.3rem,1.4rem + 3.6vw,3.5rem);--fs-h2:clamp(1.6rem,1.2rem + 1.7vw,2.2rem);
+  --shadow:0 24px 60px -30px rgba(0,0,0,.85);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;font-size:1.0625rem;line-height:1.62;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3{font-family:"Archivo","Inter",sans-serif;line-height:1.1;margin:0;font-weight:700;letter-spacing:-.02em}
+h1{font-size:var(--fs-h1);font-weight:800;letter-spacing:-.03em}
+h2{font-size:var(--fs-h2)}h3{font-size:1.16rem;font-weight:700}
+p{margin:0}a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 28px}
+.skip{position:absolute;left:-999px;top:0;background:var(--coral);color:#fff;padding:10px 16px;border-radius:8px;z-index:200}
+.skip:focus{left:16px;top:16px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:4px}
+
+.nav{position:sticky;top:0;z-index:100;background:rgba(14,20,26,.72);backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid transparent;transition:border-color .2s,background .2s}
+.nav.scrolled{border-color:var(--line);background:rgba(14,20,26,.9)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:70px}
+.brand{display:flex;align-items:center;gap:11px;font-family:"Archivo",sans-serif;font-weight:700;font-size:1.2rem;letter-spacing:-.02em;cursor:pointer}
+.brand img{width:29px;height:auto}.brand b{color:var(--coral);font-weight:800}
+.nav-links{display:flex;align-items:stretch;align-self:stretch;gap:2px}
+.nav-links a.link{display:flex;align-items:center;padding:0 14px;color:var(--slate);font-weight:500;font-size:.97rem;transition:color .15s,border-color .15s;cursor:pointer;border-bottom:2px solid transparent}
+.nav-links a.link:hover{color:var(--ink)}
+.nav-links a.link.active{color:var(--ink);font-weight:600;border-bottom-color:var(--coral)}
+.nav-links .btn{align-self:center;margin-left:8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:.97rem;border-radius:10px;padding:11px 20px;cursor:pointer;border:1px solid transparent;transition:transform .12s,background .15s,box-shadow .15s,border-color .15s;font-family:inherit}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--coral);color:#fff;box-shadow:0 8px 20px -8px rgba(234,106,84,.75)}
+.btn-primary:hover{background:var(--coral-h)}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line-2)}
+.btn-ghost:hover{border-color:#4a5a68;background:var(--bg-2)}
+.nav .btn{padding:9px 18px}
+.burger{display:none;flex-direction:column;gap:5px;background:none;border:0;padding:10px;cursor:pointer}
+.burger span{width:22px;height:2px;background:var(--ink);border-radius:2px}
+.mobile{display:none}
+
+.view{display:none;animation:viewin .4s ease both}.view.active{display:block}
+@keyframes viewin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sec{padding:clamp(56px,7vw,104px) 0;border-top:1px solid var(--line)}
+.sec.alt{background:var(--bg-2)}.sec.tight{padding-top:clamp(40px,5vw,64px)}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--coral);font-weight:600;font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;font-family:var(--mono);margin-bottom:14px}
+.eyebrow::before{content:"";width:16px;height:2px;background:var(--coral)}
+.lead{color:var(--slate);font-size:1.14rem;max-width:64ch;margin-top:16px}
+.measure{max-width:70ch}
+
+.hero{position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 50% at 85% 8%,rgba(90,155,221,.10),transparent 70%),radial-gradient(45% 45% at 6% 96%,rgba(234,106,84,.08),transparent 70%)}
+.hero-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:52px;align-items:center;padding:clamp(44px,5vw,78px) 0 clamp(50px,6vw,84px)}
+.hero h1{margin-bottom:20px}.hero .lead{font-size:1.18rem}.hero-lead{font-family:"Archivo",sans-serif;font-weight:600;font-size:clamp(1.3rem,1rem + 1.05vw,1.72rem);line-height:1.4;letter-spacing:-.01em;color:var(--ink);max-width:34ch;margin-bottom:6px}.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.hero-cta{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+.hero-note{margin-top:22px;color:var(--slate);font-size:.94rem;display:flex;align-items:center;gap:9px}
+.hero-note .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 4px rgba(56,184,156,.16)}
+
+.demo{border:1px solid var(--line);border-radius:16px;background:var(--bg-2);overflow:hidden;box-shadow:var(--shadow)}
+.demo-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;border-bottom:1px solid var(--line)}
+.demo-title{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.78rem;color:var(--slate);letter-spacing:.04em}
+.livedot{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px rgba(56,184,156,.18);animation:blink 2.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.ghostbtn{background:none;border:1px solid var(--line-2);color:var(--slate);font-family:var(--mono);font-size:.72rem;padding:5px 11px;border-radius:8px;cursor:pointer;transition:.15s}
+.ghostbtn:hover{color:var(--ink);border-color:#4a5a68}
+.stagewrap{position:relative;aspect-ratio:16/11;background:#0b1016}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab;outline:none}
+#scene:active{cursor:grabbing}
+#scene:focus-visible{box-shadow:inset 0 0 0 2px var(--blue)}
+.demo-read{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-top:1px solid var(--line);background:var(--bg-3);min-height:64px}
+.demo-read .who{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.72rem;color:var(--teal);white-space:nowrap;padding-top:2px}
+.demo-read .who .b{width:8px;height:8px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 3px rgba(56,184,156,.18)}
+.demo-read .say{font-size:.98rem;color:var(--ink);flex:1}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:38px}
+.card{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+.sec.alt .card{background:var(--bg-3)}.card h3{margin-bottom:8px}.card p{color:var(--slate);font-size:1rem}
+.pill{display:inline-block;font-size:.78rem;font-weight:600;color:var(--blue);background:rgba(90,155,221,.13);padding:4px 11px;border-radius:999px;margin-bottom:14px}
+.pill.coral{color:var(--coral);background:rgba(234,106,84,.14)}
+.caps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:40px}
+.cap{padding:28px 24px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
+.cap .ic{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;margin-bottom:18px;background:var(--bg-3);border:1px solid var(--line)}
+.cap .ic svg{width:26px;height:26px}.cap h3{margin-bottom:7px}.cap p{color:var(--slate);font-size:.98rem}
+.emph{margin-top:40px;padding:24px 28px;border-left:3px solid var(--coral);background:var(--bg-2);border-radius:0 var(--radius) var(--radius) 0;font-size:1.14rem;font-family:"Archivo",sans-serif;font-weight:600;color:var(--ink);max-width:72ch}
+.vp{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:42px}
+.vp-item{padding:26px 24px;border:1px solid var(--line);border-radius:var(--radius);background:var(--bg-2)}
+.vp-item .n{font-family:var(--mono);font-weight:500;color:var(--coral);font-size:.76rem;letter-spacing:.06em;margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.vp-item .n::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--coral)}
+.vp-item h3{font-size:1.05rem;margin-bottom:7px}.vp-item p{color:var(--slate);font-size:.96rem}
+.aud{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px}
+.aud-card{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--bg-3)}
+.aud-card .top{height:5px}.aud-card .body{padding:28px}
+.aud-card h3{font-size:1.22rem;margin-bottom:10px}.aud-card p{color:var(--slate)}
+.contact-wrap{max-width:720px}
+.mailbox{margin-top:34px;border:1px solid var(--line);border-radius:var(--radius);padding:32px;background:var(--bg-2);box-shadow:var(--shadow);display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.mailbox .pin{width:52px;height:52px;flex:0 0 auto}
+.mailbox .meta .l{color:var(--slate);font-size:.78rem;font-family:var(--mono);letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px}
+.mailbox a.mail{font-family:"Archivo",sans-serif;font-weight:700;font-size:clamp(1.3rem,1rem + 1.5vw,1.85rem);color:var(--ink);letter-spacing:-.01em;transition:color .15s;word-break:break-all}
+.mailbox a.mail:hover{color:var(--coral)}
+.band{background:var(--bg-3);border:1px solid var(--line);border-radius:20px;padding:clamp(38px,5vw,58px);text-align:center;margin:clamp(56px,7vw,88px) 0 0;position:relative;overflow:hidden}
+.band::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 90% at 50% -10%,rgba(234,106,84,.10),transparent 70%);pointer-events:none}
+.band h2{margin-bottom:14px}.band p{color:var(--slate);max-width:56ch;margin:0 auto 28px}
+.footer{border-top:1px solid var(--line);padding:34px 0;color:var(--slate);font-size:.9rem}
+.footer .in{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.footer .brand{font-size:1rem;color:var(--ink)}.footer .brand img{width:22px}
+
+@media(max-width:920px){.hero-grid{grid-template-columns:1fr;gap:34px}.hero-visual{order:-1}.caps,.vp{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.split,.aud,.caps,.vp{grid-template-columns:1fr}.wrap{padding:0 20px}.band{border-radius:16px}.nav-links a.link{padding:0 10px;font-size:.9rem}.nav-links .btn{display:none}}
+.mobile.open{display:block;border-top:1px solid var(--line);background:var(--bg)}
+.mobile .m-in{display:flex;flex-direction:column;padding:14px 20px 20px;gap:4px}
+.mobile a.link{padding:12px;border-radius:9px;color:var(--ink);font-weight:500}
+.mobile a.link:hover{background:var(--bg-2)}.mobile .btn{margin-top:10px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" data-view="geosnap" aria-label="GeoSnap home"><img src="Figures/eye_map.png" alt="GeoSnap logo"><span>Geo<b>Snap</b></span></a>
+    <nav class="nav-links" aria-label="Primary">
+      <a class="link" data-view="geosnap">GeoSnap</a>
+      <a class="link" data-view="solutions">Solutions</a>
+      <a class="link" data-view="contact">Contact</a>
+      <a class="btn btn-primary" data-view="contact">Get in touch</a>
+    </nav>
+  </div>
+  </header>
+
+<main id="main">
+
+<!-- ============ GEOSNAP ============ -->
+<section class="view active" id="view-geosnap" aria-label="GeoSnap overview">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <h1 class="sr-only">GeoSnap</h1>
+          <p class="hero-lead">GeoSnap learns physical environments and helps people and autonomous systems know where they are, navigate with confidence, and understand their surroundings â€” without relying on GPS alone.</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" data-view="solutions">Explore solutions</a>
+            <a class="btn btn-ghost" data-view="contact">Get in touch</a>
+          </div>
+          <div class="hero-note"><span class="dot"></span> Works with existing cameras and sensors â€” indoors and in GPS-denied environments.</div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="demo">
+            <div class="demo-bar">
+              <span class="demo-title"><span class="livedot"></span><span id="hPose">x 0.0  z 0.0</span></span>
+              <button id="resetView" class="ghostbtn">Reset walkthrough</button>
+            </div>
+            <div class="stagewrap">
+              <canvas id="scene" tabindex="0" aria-label="Interactive walkthrough of a mapped floor plan. Drag left or right to look around, up or down to move; arrow keys also work."></canvas>
+            </div>
+            <div class="demo-read">
+              <span class="who"><span class="b"></span>GeoSnap</span>
+              <span class="say" id="say" aria-live="polite">Starting at the main entrance.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec alt" aria-label="The problem">
+    <div class="wrap">
+      <div class="eyebrow">The problem</div>
+      <h2 class="measure">Knowing where you are is hardest exactly where it matters most.</h2>
+      <p class="lead">Location and navigation technologies are now fundamental to how people, vehicles, and autonomous systems interact with the physical world. Yet reliable positioning â€” and an understanding of what is nearby â€” still breaks down in large, complex, and increasingly automated spaces.</p>
+      <div class="split">
+        <div class="card"><span class="pill coral">Public &amp; commercial venues</span><h3>Visitors get lost; venues absorb the cost.</h3><p>In shopping centres, airports, hospitals, hotels, and mixed-use venues, visitors struggle to find stores, services, and destinations. The result is frustration and measurable operational cost: heavier demand on staff, reduced engagement, and opportunities missed through friction.</p></div>
+        <div class="card"><span class="pill">GPS-denied operations</span><h3>Autonomous systems lose their bearings.</h3><p>Defence operations involving autonomous vehicles, drones, and robotic systems face the same problem where satellite positioning cannot be guaranteed. As spaces grow larger and more automated, people and machines need a more intelligent way to understand where they are and act with confidence.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec" aria-label="How GeoSnap solves it">
+    <div class="wrap">
+      <div class="eyebrow">How GeoSnap solves it</div>
+      <h2 class="measure">A platform that understands places the way people do.</h2>
+      <p class="lead">GeoSnap is a spatial intelligence platform that learns and understands physical environments in a way closer to human reasoning than traditional navigation systems. Rather than depending on GPS signals or visual pattern-matching alone, it brings together three capabilities.</p>
+      <div class="caps">
+        <div class="cap"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#ea6a54" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Visual understanding</h3><p>Interprets what existing cameras and sensors see to determine position within an environment.</p></div>
+        <div class="cap"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#5a9bdd" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M12 22V12M3 7l9 5 9-5"/></svg></div><h3>Contextual knowledge</h3><p>Learns the layout, features, and meaning of a specific space â€” not just coordinates on a map.</p></div>
+        <div class="cap"><div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="#38b89c" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l1.8-6.5A8 8 0 1 1 21 12z"/></svg></div><h3>Conversational intelligence</h3><p>Answers environment-specific questions and guides people and systems in natural language.</p></div>
+      </div>
+      <p class="emph">By learning the unique characteristics of an environment, GeoSnap becomes a digital expert for that space.</p>
+    </div>
+  </div>
+
+  <div class="wrap"><div class="band">
+    <h2>See what GeoSnap makes possible.</h2>
+    <p>From public venues to autonomous systems, GeoSnap turns existing sensors into dependable spatial awareness.</p>
+    <a class="btn btn-primary" data-view="solutions">Explore solutions</a>
+  </div></div>
+</section>
+
+<!-- ============ SOLUTIONS ============ -->
+<section class="view" id="view-solutions" aria-label="Solutions">
+  <div class="sec tight"><div class="wrap">
+    <div class="eyebrow">Solutions</div>
+    <h2 class="measure">Dependable positioning and understanding, wherever GPS falls short.</h2>
+    <p class="lead">GeoSnap delivers spatial awareness that existing navigation systems cannot â€” using infrastructure already in place, and complementing the systems already trusted.</p>
+    <div class="vp">
+      <div class="vp-item"><div class="n">Value</div><h3>No new infrastructure</h3><p>Works with the cameras and sensors already installed. No beacons, tags, or costly retrofits.</p></div>
+      <div class="vp-item"><div class="n">Value</div><h3>Positioning where GPS fails</h3><p>Maintains reliable location indoors and in GPS-denied environments.</p></div>
+      <div class="vp-item"><div class="n">Value</div><h3>Context, not just coordinates</h3><p>Understands facilities, routes, and points of interest within a space.</p></div>
+      <div class="vp-item"><div class="n">Value</div><h3>Natural-language assistance</h3><p>Lets visitors and operators ask questions and receive clear, spoken or written guidance.</p></div>
+      <div class="vp-item"><div class="n">Value</div><h3>A digital expert per space</h3><p>Learns every environment individually and keeps improving as it does.</p></div>
+      <div class="vp-item"><div class="n">Value</div><h3>Complementary by design</h3><p>Works alongside GNSS, LiDAR, and existing navigation rather than replacing them.</p></div>
+    </div>
+  </div></div>
+
+  <div class="sec alt"><div class="wrap">
+    <div class="eyebrow">Where it applies</div>
+    <h2 class="measure">Built for people and for machines.</h2>
+    <div class="aud">
+      <div class="aud-card"><div class="top" style="background:var(--coral)"></div><div class="body"><h3>Public &amp; commercial venues</h3><p>Help visitors find stores, services, and destinations across shopping centres, airports, hospitals, hotels, and mixed-use sites â€” reducing demand on staff and increasing engagement, without installing new hardware.</p></div></div>
+      <div class="aud-card"><div class="top" style="background:var(--blue)"></div><div class="body"><h3>Defence &amp; autonomous systems</h3><p>Give autonomous vehicles, drones, and robotic platforms dependable spatial awareness in GPS-denied conditions, so they can navigate and operate with confidence where conventional positioning cannot be relied upon.</p></div></div>
+    </div>
+  </div></div>
+
+  <div class="wrap"><div class="band">
+    <h2>Discuss where GeoSnap fits.</h2>
+    <p>Tell GeoSnap about the environment where positioning becomes difficult and the outcome you need.</p>
+    <a class="btn btn-primary" data-view="contact">Get in touch</a>
+  </div></div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="view" id="view-contact" aria-label="Contact">
+  <div class="sec tight"><div class="wrap contact-wrap">
+    <div class="eyebrow">Contact</div>
+    <h2>Get in touch.</h2>
+    <p class="lead">For enquiries, partnerships, and demonstrations, contact GeoSnap directly.</p>
+    <div class="mailbox">
+      <svg class="pin" viewBox="0 0 60 60" aria-hidden="true"><path d="M30 4C18 4 8 13 8 25c0 16 22 31 22 31s22-15 22-31C52 13 42 4 30 4z" fill="#ea6a54"/><circle cx="30" cy="24" r="11" fill="#fff"/><circle cx="30" cy="24" r="6" fill="#5a9bdd"/></svg>
+      <div class="meta"><div class="l">Email</div><a class="mail" href="mailto:barkin.dagda@hotmail.com">barkin.dagda@hotmail.com</a></div>
+    </div>
+  </div></div>
+</section>
+
+</main>
+
+<footer class="footer"><div class="wrap in">
+  <a class="brand" data-view="geosnap"><img src="Figures/eye_map.png" alt=""><span>Geo<b style="color:var(--coral)">Snap</b></span></a>
+  <div>&copy; <span id="yr"></span> GeoSnap</div>
+</div></footer>
+
+<script>
+(function(){
+  /* routing */
+  var views=["geosnap","solutions","contact"];
+  function show(v){
+    if(views.indexOf(v)<0)v="geosnap";
+    document.querySelectorAll(".view").forEach(function(s){s.classList.toggle("active",s.id==="view-"+v);});
+    document.querySelectorAll(".nav-links .link,.mobile .link").forEach(function(a){a.classList.toggle("active",a.getAttribute("data-view")===v);});
+    if(history.replaceState)history.replaceState(null,"","#"+v);else location.hash=v;
+    window.scrollTo({top:0,behavior:"auto"});
+  }
+  document.addEventListener("click",function(e){var t=e.target.closest("[data-view]");if(t){e.preventDefault();show(t.getAttribute("data-view"));}});
+  function closeMenu(){}
+  var nav=document.getElementById("nav");
+  function onScroll(){nav.classList.toggle("scrolled",window.scrollY>6);}
+  window.addEventListener("scroll",onScroll,{passive:true});onScroll();
+  document.getElementById("yr").textContent=new Date().getFullYear();
+
+  /* ---------------- floor-plan walkthrough ---------------- */
+  var cv=document.getElementById("scene"),ctx=cv.getContext("2d");
+  var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+  var dpr=1,VW=0,VH=0;
+  var sayEl=document.getElementById("say"),lastSay="",hPose=document.getElementById("hPose"),lastAt=0,pendingMsg="",pendingAt=0;
+
+  // building footprint: x 0..44, z 0..30 (metres)
+  var walls=[
+    [0,0,20,0],[24,0,44,0],[0,30,44,30],[0,0,0,30],[44,0,44,30],   // shell (entrance gap 20-24)
+    [20,0,20,7],[24,0,24,7],                                        // entrance vestibule
+    [3,8,19,8],[25,8,41,8],                                         // concourse south wall (vestibule gap)
+    [11,12,11,27],[19,12,19,27],[27,12,27,27],[35,12,35,27],        // north room partitions
+    [3,27,41,27],[3,12,3,27],[41,12,41,27]                          // north back + sides
+  ];
+  // concourse north wall, per bay with a central 2 m doorway
+  [[3,11],[11,19],[19,27],[27,35],[35,41]].forEach(function(b){var m=(b[0]+b[1])/2;walls.push([b[0],12,m-1,12]);walls.push([m+1,12,b[1],12]);});
+
+  var POIS=[
+    {n:"Main entrance",x:22,z:1,ref:"the main entrance",desc:"the main entrance"},
+    {n:"Information",x:22,z:9,ref:"the information desk",desc:"the information desk, in the central concourse"},
+    {n:"Atrium",x:13,z:10,ref:"the atrium",desc:"the atrium, toward the western end of the concourse"},
+    {n:"Help desk",x:30,z:10,ref:"the help desk",desc:"the help desk, on the eastern side of the concourse"},
+    {n:"CafÃ©",x:7,z:19,ref:"the cafÃ©",desc:"the cafÃ©, off the north side of the concourse"},
+    {n:"Pharmacy",x:15,z:19,ref:"the pharmacy",desc:"the pharmacy, among the northern rooms"},
+    {n:"Restrooms",x:23,z:19,ref:"the restrooms",desc:"the restrooms, mid-concourse on the north side"},
+    {n:"Lifts",x:31,z:19,ref:"the lifts",desc:"the lifts, on the northern side of the concourse"},
+    {n:"Gate A",x:39,z:19,ref:"Gate A",desc:"Gate A, at the eastern end of the building"},
+    {n:"Waiting area",x:11,z:4,ref:"the waiting area",desc:"the waiting area, just south of the entrance"},
+    {n:"Baggage",x:33,z:4,ref:"baggage reclaim",desc:"baggage reclaim, to the south-east"}
+  ];
+  var route=[[22,2],[22,10],[6,10],[38,10]];
+
+  // sample point cloud
+  var pts=[];
+  function jj(){return (Math.random()-0.5)*0.22;}
+  function sampleWall(a,b){
+    var dx=b[0]-a[0],dz=b[1]-a[1],len=Math.hypot(dx,dz),n=Math.max(1,Math.round(len/1.1)),H=[0.4,1.1,1.8,2.6];
+    for(var i=0;i<=n;i++){var t=i/n,x=a[0]+dx*t,z=a[1]+dz*t;for(var h=0;h<H.length;h++)pts.push({x:x+jj(),y:H[h]+jj()*0.3,z:z+jj(),c:1});}
+  }
+  walls.forEach(function(w){sampleWall([w[0],w[1]],[w[2],w[3]]);});
+  for(var fx=2;fx<=42;fx+=1.7)for(var fz=1;fz<=29;fz+=1.7)pts.push({x:fx+jj(),y:0,z:fz+jj(),c:0});
+  POIS.forEach(function(p){for(var h=0.5;h<=2.4;h+=0.6)for(var a=0;a<4;a++)pts.push({x:p.x+Math.cos(a*1.6)*0.34,y:h,z:p.z+Math.sin(a*1.6)*0.34,c:3});});
+  pts.forEach(function(p){p.px=0;p.py=0;p.seen=false;});
+
+  // route geometry
+  var segLen=[],cum=[0],total=0,i;
+  for(i=0;i<route.length-1;i++){var l=Math.hypot(route[i+1][0]-route[i][0],route[i+1][1]-route[i][1]);segLen.push(l);total+=l;cum.push(total);}
+  function at(s){s=Math.max(0,Math.min(total,s));var k=0;while(k<segLen.length-1&&s>cum[k+1])k++;var t=(s-cum[k])/segLen[k];var a=route[k],b=route[k+1];var dx=b[0]-a[0],dz=b[1]-a[1];return {x:a[0]+dx*t,z:a[1]+dz*t,tx:dx/segLen[k],tz:dz/segLen[k]};}
+
+  var cam={x:22,y:1.6,z:2,yaw:0,pitch:0.05};
+  var s=0.5,dir=1,userYaw=0,tgtYaw=0,manDs=0,look=0,paused=false;
+
+  function resize(){var r=cv.getBoundingClientRect();dpr=Math.min(2,window.devicePixelRatio||1);VW=Math.max(1,Math.round(r.width*dpr));VH=Math.max(1,Math.round(r.height*dpr));cv.width=VW;cv.height=VH;if(reduce)draw();}
+  if(window.ResizeObserver){new ResizeObserver(resize).observe(cv);}else{window.addEventListener("resize",resize);}
+  resize();
+
+  function draw(){
+    var f=VW*0.9, cx=VW/2, cy=VH*0.54, near=0.35, far=30;
+    var g=ctx.createLinearGradient(0,0,0,VH);g.addColorStop(0,"#0d151d");g.addColorStop(1,"#080d12");
+    ctx.fillStyle=g;ctx.fillRect(0,0,VW,VH);
+    var hg=ctx.createRadialGradient(cx,cy,0,cx,cy,VW*0.6);hg.addColorStop(0,"rgba(90,155,221,.09)");hg.addColorStop(1,"rgba(90,155,221,0)");
+    ctx.fillStyle=hg;ctx.fillRect(0,0,VW,VH);
+
+    var cyaw=Math.cos(cam.yaw),syaw=Math.sin(cam.yaw);
+    var feats=[];
+    for(var i=0;i<pts.length;i++){
+      var p=pts[i];
+      var dx=p.x-cam.x, dz=p.z-cam.z, dy=p.y-cam.y;
+      var rx=dx*cyaw - dz*syaw;
+      var rz=dx*syaw + dz*cyaw;
+      if(rz<near){p.seen=false;continue;}
+      var sx=cx + f*(rx/rz);
+      var sy=cy - f*((dy - cam.pitch*rz)/rz);
+      if(sx<-30||sx>VW+30||sy<-30||sy>VH+30){p.seen=false;continue;}
+      var t=Math.max(0,Math.min(1,(far-rz)/far));
+      var size=Math.max(0.6,(p.c===0?1.0:1.5)*t*3.0*dpr/Math.max(0.6,rz*0.14));
+      var alpha=0.1+0.8*t*t, col;
+      if(p.c===0)col="rgba(105,135,160,"+(alpha*0.45)+")";
+      else if(p.c===1)col="rgba(128,158,185,"+(alpha*0.85)+")";
+      else col=null;
+      if(col){ctx.fillStyle=col;ctx.beginPath();ctx.arc(sx,sy,size,0,6.283);ctx.fill();}
+      if(p.c===3 && rz<18)feats.push({sx:sx,sy:sy,rz:rz,t:t});
+      if(p.f===undefined&&p.c!==3){} // noop
+      if(p.c===3 && p.seen){ctx.strokeStyle="rgba(56,184,156,"+(0.4*t)+")";ctx.lineWidth=1.1*dpr;ctx.beginPath();ctx.moveTo(p.px,p.py);ctx.lineTo(sx,sy);ctx.stroke();}
+      p.px=sx;p.py=sy;p.seen=true;
+    }
+    feats.sort(function(a,b){return a.rz-b.rz;});
+    for(var k=0;k<Math.min(feats.length,26);k++){
+      var ff=feats[k], sz=Math.max(3,7*ff.t)*dpr;
+      var gg=ctx.createRadialGradient(ff.sx,ff.sy,0,ff.sx,ff.sy,sz*2.4);
+      gg.addColorStop(0,"rgba(234,106,84,"+(0.5*ff.t)+")");gg.addColorStop(1,"rgba(234,106,84,0)");
+      ctx.fillStyle=gg;ctx.beginPath();ctx.arc(ff.sx,ff.sy,sz*2.4,0,6.283);ctx.fill();
+      ctx.strokeStyle="rgba(242,131,110,"+(0.55+0.4*ff.t)+")";ctx.lineWidth=1.3*dpr;ctx.strokeRect(ff.sx-sz,ff.sy-sz,sz*2,sz*2);
+    }
+    // reticle
+    ctx.strokeStyle="rgba(255,255,255,.14)";ctx.lineWidth=1*dpr;ctx.beginPath();
+    ctx.moveTo(cx-9*dpr,cy);ctx.lineTo(cx-3*dpr,cy);ctx.moveTo(cx+3*dpr,cy);ctx.lineTo(cx+9*dpr,cy);
+    ctx.moveTo(cx,cy-9*dpr);ctx.lineTo(cx,cy-3*dpr);ctx.moveTo(cx,cy+3*dpr);ctx.lineTo(cx,cy+9*dpr);ctx.stroke();
+    // vignette
+    var vg=ctx.createRadialGradient(cx,VH*0.5,VH*0.3,cx,VH*0.5,VH*0.85);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(0,0,0,.5)");
+    ctx.fillStyle=vg;ctx.fillRect(0,0,VW,VH);
+
+    drawPlan();
+    var deg=((cam.yaw*180/Math.PI)%360+360)%360;
+    hPose.textContent="x "+cam.x.toFixed(1)+"  z "+cam.z.toFixed(1)+"  Î¸ "+deg.toFixed(0)+"Â°";
+  }
+
+  function drawPlan(){
+    var w=132*dpr,h=100*dpr,mx=VW-w-14*dpr,my=14*dpr,pad=10*dpr;
+    var sc=Math.min((w-pad*2)/44,(h-pad*2)/30);
+    function MX(x){return mx+pad+x*sc;}
+    function MZ(z){return my+h-pad-z*sc;}
+    ctx.save();
+    ctx.fillStyle="rgba(9,14,19,.68)";ctx.strokeStyle="rgba(255,255,255,.12)";ctx.lineWidth=1*dpr;
+    rr(mx,my,w,h,8*dpr);ctx.fill();ctx.stroke();
+    rr(mx,my,w,h,8*dpr);ctx.clip();
+    // route
+    ctx.strokeStyle="rgba(234,106,84,.35)";ctx.lineWidth=1.4*dpr;ctx.setLineDash([3*dpr,3*dpr]);
+    ctx.beginPath();for(var r=0;r<route.length;r++){var X=MX(route[r][0]),Z=MZ(route[r][1]);if(r===0)ctx.moveTo(X,Z);else ctx.lineTo(X,Z);}ctx.stroke();ctx.setLineDash([]);
+    // walls
+    ctx.strokeStyle="rgba(150,178,205,.7)";ctx.lineWidth=1.3*dpr;ctx.beginPath();
+    for(var i2=0;i2<walls.length;i2++){var wl=walls[i2];ctx.moveTo(MX(wl[0]),MZ(wl[1]));ctx.lineTo(MX(wl[2]),MZ(wl[3]));}ctx.stroke();
+    // POIs
+    for(var q=0;q<POIS.length;q++){ctx.fillStyle="rgba(90,155,221,.9)";ctx.beginPath();ctx.arc(MX(POIS[q].x),MZ(POIS[q].z),1.7*dpr,0,6.283);ctx.fill();}
+    // camera + heading
+    var camX=MX(cam.x),camZ=MZ(cam.z);
+    var hx=Math.sin(cam.yaw),hz=Math.cos(cam.yaw);
+    ctx.strokeStyle="rgba(234,106,84,.8)";ctx.lineWidth=1.4*dpr;ctx.beginPath();ctx.moveTo(camX,camZ);ctx.lineTo(camX+hx*10*dpr,camZ-hz*10*dpr);ctx.stroke();
+    ctx.fillStyle="#ea6a54";ctx.beginPath();ctx.arc(camX,camZ,3*dpr,0,6.283);ctx.fill();
+    ctx.restore();
+    ctx.fillStyle="rgba(149,165,178,.85)";ctx.font=(9*dpr)+"px IBM Plex Mono, monospace";ctx.fillText("FLOOR PLAN",mx+9*dpr,my+15*dpr);
+  }
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+
+  /* natural-language narration */
+  function narrate(baseYaw){
+    var hx=Math.sin(baseYaw),hz=Math.cos(baseYaw),rxv=Math.cos(baseYaw),rzv=-Math.sin(baseYaw);
+    var nearest=null,ahead=null,side=null;
+    for(var i=0;i<POIS.length;i++){
+      var p=POIS[i],vx=p.x-cam.x,vz=p.z-cam.z,d=Math.hypot(vx,vz);
+      var fwd=vx*hx+vz*hz, rt=vx*rxv+vz*rzv;
+      if(!nearest||d<nearest.d)nearest={p:p,d:d};
+      if(fwd>1.5&&fwd<26&&Math.abs(rt)<9){if(!ahead||fwd<ahead.fwd)ahead={p:p,fwd:fwd};}
+      if(Math.abs(fwd)<3.6&&Math.abs(rt)<9&&d<9){if(!side||d<side.d)side={p:p,d:d,rt:rt};}
+    }
+    var msg,hold=4200;
+    if(nearest&&nearest.d<2.9){
+      hold=1600;
+      msg="You have arrived at "+nearest.p.desc+".";
+      if(ahead&&ahead.p!==nearest.p)msg+=" From here, "+ahead.p.ref+" is a short walk further on.";
+    }else{
+      var sd=side?("On your "+(side.rt>0?"right":"left")+" is "+side.p.ref+". "):"";
+      var ah=ahead?("Continue ahead and "+ahead.p.ref+" is about "+Math.round(ahead.fwd)+" metres away."):"";
+      if(sd||ah)msg="You are moving through the main concourse. "+sd+ah;
+      else msg="You are moving through the main concourse toward the far end of the building.";
+      msg=msg.replace(/\s+/g," ").trim();
+    }
+    var now=performance.now();
+    if(msg!==pendingMsg){pendingMsg=msg;pendingAt=now;}
+    if(msg!==lastSay && now-pendingAt>350 && now-lastAt>hold){lastSay=msg;lastAt=now;sayEl.textContent=msg;}
+  }
+
+  /* loop */
+  var t0=performance.now(),raf=null;
+  function step(now){
+    var dt=Math.min(0.05,(now-t0)/1000);t0=now;
+    if(!paused)s+=0.85*dir*dt;
+    s+=manDs;manDs*=Math.pow(0.02,dt);
+    if(s>=total){s=total;dir=-1;}if(s<=0){s=0;dir=1;}
+    var pos=at(s);cam.x=pos.x;cam.z=pos.z;
+    var baseYaw=Math.atan2(pos.tx*dir,pos.tz*dir);
+    if(!dragging)tgtYaw*=Math.pow(0.05,dt);
+    userYaw+=(tgtYaw-userYaw)*Math.min(1,dt*6);
+    cam.yaw=baseYaw+userYaw+look*0.18;
+    draw();narrate(baseYaw);
+    raf=requestAnimationFrame(step);
+  }
+  if(!reduce)raf=requestAnimationFrame(step);else{var p0=at(s);cam.x=p0.x;cam.z=p0.z;cam.yaw=Math.atan2(p0.tx,p0.tz);draw();narrate(cam.yaw);}
+
+  function redraw(){if(reduce){var pp=at(s);cam.x=pp.x;cam.z=pp.z;var by=Math.atan2(pp.tx*dir,pp.tz*dir);cam.yaw=by+tgtYaw;draw();narrate(by);}}
+
+  /* input */
+  var dragging=false,lastX=0,lastY=0;
+  cv.addEventListener("pointerdown",function(e){dragging=true;paused=false;lastX=e.clientX;lastY=e.clientY;cv.setPointerCapture(e.pointerId);});
+  cv.addEventListener("pointermove",function(e){
+    var r=cv.getBoundingClientRect();look=((e.clientX-r.left)/r.width-0.5);
+    if(dragging){var ddx=e.clientX-lastX,ddy=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;
+      tgtYaw+=ddx*0.004;tgtYaw=Math.max(-0.9,Math.min(0.9,tgtYaw));manDs+=-ddy*0.05;redraw();}
+  });
+  cv.addEventListener("pointerup",function(){dragging=false;});
+  cv.addEventListener("pointercancel",function(){dragging=false;});
+  cv.addEventListener("pointerleave",function(){look=0;});
+  cv.addEventListener("keydown",function(e){
+    var k=e.key.toLowerCase(),h=false;
+    if(k==="arrowleft"||k==="a"){tgtYaw-=0.12;h=true;}
+    else if(k==="arrowright"||k==="d"){tgtYaw+=0.12;h=true;}
+    else if(k==="arrowup"||k==="w"){manDs+=3;h=true;}
+    else if(k==="arrowdown"||k==="s"){manDs-=3;h=true;}
+    if(h){e.preventDefault();tgtYaw=Math.max(-0.9,Math.min(0.9,tgtYaw));redraw();}
+  });
+  document.getElementById("resetView").addEventListener("click",function(){s=0.5;dir=1;tgtYaw=0;userYaw=0;manDs=0;look=0;lastSay="";if(reduce)redraw();});
+  document.addEventListener("visibilitychange",function(){paused=document.hidden;});
+
+  var start=(location.hash||"").replace("#","");
+  show(views.indexOf(start)>=0?start:"geosnap");
+})();
+</script>
+</body>
+</html>
